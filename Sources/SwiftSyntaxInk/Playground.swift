@@ -28,7 +28,9 @@ struct Playground: View {
                 .padding()
                 .frame(width: 700,  height: 700, alignment: .topLeading)
         }
+#if os(iOS)
         .ignoresSafeArea()
+#endif
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(SwiftUI.Color(red: 41 / 255.0, green: 42 / 255.0, blue: 47 / 255.0))
     }

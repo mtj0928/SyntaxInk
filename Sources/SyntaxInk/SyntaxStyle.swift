@@ -1,16 +1,17 @@
 import Foundation
+import SwiftUI
 
-public struct Style: Sendable {
-    public var font: Font
-    public var color: Color
+public struct SyntaxStyle: Sendable {
+    public var font: SyntaxFont
+    public var color: SyntaxColor
 
-    public init(font: Font, color: Color) {
+    public init(font: SyntaxFont, color: SyntaxColor) {
         self.font = font
         self.color = color
     }
 }
 
-public struct Color: Sendable {
+public struct SyntaxColor: Sendable {
     public var red: CGFloat
     public var green: CGFloat
     public var blue: CGFloat
@@ -29,20 +30,20 @@ public struct Color: Sendable {
     }
 }
 
-public struct Font: Sendable {
+public struct SyntaxFont: Sendable {
     public var name: String
     public var size: CGFloat
-    public var weight: Weight
+    public var weight: SyntaxWeight
 
-    public init(name: String, size: CGFloat, weight: Weight) {
+    public init(name: String, size: CGFloat, weight: SyntaxWeight) {
         self.name = name
         self.size = size
         self.weight = weight
     }
 }
 
-extension Font {
-    public enum Weight: Sendable {
+extension SyntaxFont {
+    public enum SyntaxWeight: Sendable {
         case ultraLight
         case thin
         case light

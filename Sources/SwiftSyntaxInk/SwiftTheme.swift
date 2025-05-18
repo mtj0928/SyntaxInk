@@ -130,10 +130,10 @@ extension SwiftTheme {
     }
 
     public struct Configuration: Sendable {
-        public var baseStyle: Style
-        public var converters: [StyleKind: @Sendable (inout Style) -> Void]
+        public var baseStyle: SyntaxStyle
+        public var converters: [StyleKind: @Sendable (inout SyntaxStyle) -> Void]
 
-        func style(for kind: StyleKind) -> Style {
+        func style(for kind: StyleKind) -> SyntaxStyle {
             var style = baseStyle
             converters[kind]?(&style)
             return style

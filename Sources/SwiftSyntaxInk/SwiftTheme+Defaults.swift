@@ -1,4 +1,5 @@
 import SyntaxInk
+import SyntaxInk
 
 extension SwiftTheme {
     public static let defaultDark = {

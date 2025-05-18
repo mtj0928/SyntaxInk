@@ -2,23 +2,11 @@
 import SwiftUI
 import SyntaxInk
 
-typealias SwiftSyntaxHighlighter = SyntaxHighlighter<SwiftGrammar, SwiftTheme>
-
-extension SwiftSyntaxHighlighter {
-    init() {
-        self.init(grammar: SwiftGrammar(), theme: .defaultDark)
-    }
-}
-
-extension SwiftUI.Color {
-    static let xcodeBackgroundColor = SwiftUI.Color(red: 41 / 255.0, green: 42 / 255.0, blue: 47 / 255.0)
-}
-
 struct Playground: View {
     var code: String
 
     var body: some View {
-        let syntaxHighlighter = SwiftSyntaxHighlighter()
+        let syntaxHighlighter = SwiftSyntaxHighlighter(theme: .defaultDark)
         let attributedString = syntaxHighlighter.highlight(code)
         ScrollView {
             Text(attributedString)
@@ -26,7 +14,7 @@ struct Playground: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(Color.xcodeBackgroundColor)
+        .background(Color.xcodeBackgroundDefaultDarkColor)
 #if os(visionOS)
         .glassBackgroundEffect()
 #endif
@@ -76,7 +64,7 @@ print("Name: \\(person.name)")
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    .background(Color.xcodeBackgroundColor)
+    .background(Color.xcodeBackgroundDefaultDarkColor)
 }
 
 

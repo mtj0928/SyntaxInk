@@ -20,16 +20,3 @@ public struct SyntaxHighlighter<
         }
     }
 }
-
-public protocol Grammar: Sendable {
-    associatedtype Token: Sendable
-
-    func tokenize(_ code: String) -> [Token]
-}
-
-public protocol Theme: Sendable {
-    associatedtype Token: Sendable
-
-    func decorate(token: Token) -> AttributedString
-}
-

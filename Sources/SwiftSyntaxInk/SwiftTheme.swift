@@ -11,8 +11,15 @@ public struct SwiftTheme: Theme {
         self.configuration = configuration
         self.highlightRules = [
             KeywordHighlightRule(configuration: configuration),
+            AttributeHeuristicHighlightRule(configuration: configuration),
             StringHighlightRule(configuration: configuration),
-            NumberHighlightRule(configuration: configuration)
+            NumberHighlightRule(configuration: configuration),
+            PreprocessorHighlightRule(configuration: configuration),
+            TypeDeclarationHighlightRule(configuration: configuration),
+            OtherDeclarationHighlightRule(configuration: configuration),
+            ClassAndTypeNameHighlightRule(configuration: configuration),
+            ClassAndTypeNameHeuristicHighlightRule(configuration: configuration),
+            FunctionAndPropertyHighlightRule(configuration: configuration),
         ]
     }
 
@@ -38,47 +45,53 @@ public struct SwiftTheme: Theme {
 
     private func triviaAttributedString(_ trivia: TriviaPiece) -> AttributedString {
         switch trivia {
-        case .backslashes(let int):
-            return AttributedString()
+        case .backslashes(let count):
+            return AttributedString(String(repeating: #"\"#, count: count))
+                .applying(configuration.style(for: .plainText))
         case .blockComment(let string):
             return AttributedString(string)
                 .applying(configuration.style(for: .comments))
-        case .carriageReturns(let int):
-            return AttributedString()
-        case .carriageReturnLineFeeds(let int):
-            return AttributedString()
+        case .carriageReturns(let count):
+            return AttributedString(String(repeating: "\r", count: count))
+                .applying(configuration.style(for: .plainText))
+        case .carriageReturnLineFeeds(let count):
+            return AttributedString(String(repeating: "\r\n", count: count))
+                .applying(configuration.style(for: .plainText))
         case .docBlockComment(let string):
             return AttributedString(string)
                 .applying(configuration.style(for: .documentationMarkup))
         case .docLineComment(let string):
             return AttributedString(string)
                 .applying(configuration.style(for: .documentationMarkup))
-        case .formfeeds(let int):
-            return AttributedString()
+        case .formfeeds(let count):
+            return AttributedString(String(repeating: "\u{c}", count: count))
+                .applying(configuration.style(for: .plainText))
         case .lineComment(let string):
             return AttributedString(string)
                 .applying(configuration.style(for: .comments))
-        case .newlines(let int):
-            return AttributedString(String(repeating: "\n", count: int))
+        case .newlines(let count):
+            return AttributedString(String(repeating: "\n", count: count))
                 .applying(configuration.style(for: .plainText))
-        case .pounds(let int):
-            return AttributedString()
-        case .spaces(let int):
-            return AttributedString(String(repeating: " ", count: int))
+        case .pounds(let count):
+            return AttributedString(String(repeating: "#", count: count))
+        case .spaces(let count):
+            return AttributedString(String(repeating: " ", count: count))
                 .applying(configuration.style(for: .plainText))
-        case .tabs(let int):
-            return AttributedString(String(repeating: "\t", count: int))
+        case .tabs(let count):
+            return AttributedString(String(repeating: "\t", count: count))
                 .applying(configuration.style(for: .plainText))
         case .unexpectedText(let string):
             return AttributedString(string)
                 .applying(configuration.style(for: .plainText))
-        case .verticalTabs(let int):
-            return AttributedString()
+        case .verticalTabs(let count):
+            return AttributedString(String(repeating: "\u{b}", count: count))
+                .applying(configuration.style(for: .plainText))
         }
     }
 }
 
 extension SwiftTheme {
+    // Follow Xcode's theme
     public enum StyleKind: Sendable {
         case plainText
         case keywords
@@ -86,11 +99,34 @@ extension SwiftTheme {
         case documentationMarkup
         case string
         case numbers
+        case preprocessorStatements
+        case typeDeclarations
+        case otherDeclarations
+        case otherClassNames
+        case otherFunctionAndMethodNames
+        case otherTypeNames
+        case otherPropertiesAndGlobals
 
         // TODO: Support these types
         // case documentationMarkupKeywords
         // case marks
         // case character
+        // case regexLiterals
+        // case regexLiteralNumbers
+        // case regexLiteralCaptureNames
+        // case regexLiteralCharacterClassNames
+        // case regexLiteralOperatons
+        // case urls
+        // case attributes
+        // case projectClassNames
+        // case projectFunctionAndMethodNames
+        // case projectConstants
+        // case projectTypeNames
+        // case projectPropertiesAndGlobals
+        // case projectPreprocessorMacros
+        // case otherConstants
+        // case otherPreprocessorMacros
+        // case heading
     }
 
     public struct Configuration: Sendable {
@@ -105,163 +141,55 @@ extension SwiftTheme {
     }
 }
 
-public struct Style: Sendable {
-    public var font: Font
-    public var color: Color
-}
-
-public struct Color: Sendable {
-    public var red: CGFloat
-    public var green: CGFloat
-    public var blue: CGFloat
-    public var alpha: CGFloat
-
-    public init(
-        red: CGFloat,
-        green: CGFloat,
-        blue: CGFloat,
-        alpha: CGFloat = 1.0
-    ) {
-        self.red = red
-        self.green = green
-        self.blue = blue
-        self.alpha = alpha
-    }
-}
-
-#if canImport(AppKit)
-import AppKit
-#elseif canImport(UIKit)
-import UIKit
-#endif
-
-public struct Font: Sendable {
-    public var name: String
-    public var size: CGFloat
-    public var weight: Weight
-
-    public enum Weight: Sendable {
-        case ultraLight
-        case thin
-        case light
-        case regular
-        case medium
-        case semibold
-        case bold
-        case heavy
-        case black
-    }
-}
-
-#if canImport(AppKit)
-extension AttributedString {
-    public func applying(_ style: Style) -> Self {
-        var copy = self
-        copy.appKit.font = style.font.resolve()
-        copy.appKit.foregroundColor = style.color.resolve()
-        return copy
-    }
-}
-
-extension Font {
-    public func resolve() -> NSFont {
-        let fontDescriptor = NSFontDescriptor(
-            name: name,
-            size: size
-        ).addingAttributes([
-            NSFontDescriptor.AttributeName.traits: [
-                NSFontDescriptor.TraitKey.weight: weight.resolve().rawValue
-            ]
-        ])
-        return NSFont(descriptor: fontDescriptor, size: size)!
-    }
-}
-
-extension Font.Weight {
-    func resolve() -> NSFont.Weight {
-        switch self {
-        case .ultraLight: .ultraLight
-        case .thin: .thin
-        case .light: .light
-        case .regular: .regular
-        case .medium: .medium
-        case .semibold: .semibold
-        case .bold: .bold
-        case .heavy: .heavy
-        case .black: .black
-        }
-    }
-}
-
-extension Color {
-    func resolve() -> NSColor {
-        let color = NSColor(
-            calibratedRed: red / 255.0,
-            green: green / 255.0,
-            blue: blue / 255.0,
-            alpha: alpha
-        )
-        return color
-    }
-}
-#endif
-
-extension SwiftTheme.Configuration {
-    public static let defaultDark = {
-        let base = Style(
-            font: Font(name: "SF Mono", size: 16, weight: .regular),
-            color: Color(red: 255, green: 255, blue: 255)
-        )
-        return defaultDark(base)
-    }()
-
-    public static func defaultDark(_ base: Style) -> SwiftTheme.Configuration {
-        SwiftTheme.Configuration(baseStyle: base, converters: [
-            .plainText: { style in
-            },
-            .keywords: { style in
-                style.color = Color(red: 252, green: 95, blue: 163)
-                style.font.weight = .bold
-            },
-            .comments: { style in
-                style.color = Color(red: 108, green: 121, blue: 134)
-                style.font.weight = .medium
-            },
-            .documentationMarkup: { style in
-                style.color = Color(red: 108, green: 121, blue: 134)
-                style.font = Font(name: "Helvetica", size: 16, weight: .regular)
-            },
-            .string: { style in
-                style.color = Color(red: 252, green: 106, blue: 93)
-                style.font.weight = .medium
-            },
-            .numbers: { style in
-                style.color = Color(red: 208, green: 191, blue: 105)
-                style.font.weight = .medium
-            }
-        ])
-    }
-}
-
 // MARK: - Ruleset
 
 public protocol SwiftSyntaxHighlightRule: Sendable {
     func decorate(_ token: TokenSyntax) -> AttributedString?
 }
 
+enum WalkParentAction<T> {
+    case found(T)
+    case notFound
+    case moveToParent
+}
+
+extension SwiftSyntaxHighlightRule {
+    func walkParent<T>(of node: Syntax, handler: (Syntax) -> WalkParentAction<T>) -> T? {
+        var currentNode: Syntax? = node
+        while let node = currentNode {
+            let result = handler(node)
+            switch result {
+            case .found(let value): return value
+            case .notFound: return nil
+            case .moveToParent: currentNode = node.parent
+            }
+        }
+        return nil
+    }
+}
+
 public struct KeywordHighlightRule: SwiftSyntaxHighlightRule {
     public var configuration: SwiftTheme.Configuration
+    let predefinedMacroKeywords = [
+        "file", "filePath", "fileID", "function", "line", "column", "dsohandle", "isolation"
+    ]
 
     public init(configuration: SwiftTheme.Configuration) {
         self.configuration = configuration
     }
 
     public func decorate(_ token: TokenSyntax) -> AttributedString? {
-        guard case .keyword = token.tokenKind else {
+        lazy var result = AttributedString(token.text)
+            .applying(configuration.style(for: .keywords))
+
+        if case .keyword = token.tokenKind {
+            return result
+        } else if let macro = token.parent?.as(MacroExpansionExprSyntax.self),
+                  predefinedMacroKeywords.contains(macro.macroName.text) {
+            return result
+        } else {
             return nil
         }
-        return AttributedString(token.text)
-            .applying(configuration.style(for: .keywords))
     }
 }
 
@@ -298,5 +226,314 @@ public struct NumberHighlightRule: SwiftSyntaxHighlightRule {
         default:
             return nil
         }
+    }
+}
+
+public struct PreprocessorHighlightRule: SwiftSyntaxHighlightRule {
+    public var configuration: SwiftTheme.Configuration
+
+    public init(configuration: SwiftTheme.Configuration) {
+        self.configuration = configuration
+    }
+
+    public func decorate(_ token: TokenSyntax) -> AttributedString? {
+        if [TokenKind.poundIf, .poundEndif, .poundElse, .poundElseif].contains(token.tokenKind) {
+            return AttributedString(token.text)
+                .applying(configuration.style(for: .preprocessorStatements))
+        }
+
+        return walkParent(of: Syntax(token)) { node in
+            guard let ifConfigClauseSyntax = node.parent?.as(IfConfigClauseSyntax.self) else {
+                return .moveToParent
+            }
+            if ifConfigClauseSyntax.condition?.id == node.id {
+                let result = AttributedString(token.text)
+                    .applying(configuration.style(for: .preprocessorStatements))
+                return .found(result)
+            }
+            return .notFound
+        }
+    }
+}
+
+public struct TypeDeclarationHighlightRule: SwiftSyntaxHighlightRule {
+    public var configuration: SwiftTheme.Configuration
+    
+    public init(configuration: SwiftTheme.Configuration) {
+        self.configuration = configuration
+    }
+    
+    public func decorate(_ token: TokenSyntax) -> AttributedString? {
+        guard case .identifier = token.tokenKind else {
+            return nil
+        }
+        return walkParent(of: Syntax(token)) { node in
+            func result() -> AttributedString {
+                AttributedString(token.text)
+                    .applying(configuration.style(for: .typeDeclarations))
+            }
+
+            // class
+            if let typeDeclarationSyntax = node.as(ClassDeclSyntax.self) {
+                if typeDeclarationSyntax.name.id == token.id {
+                    return .found(result())
+                }
+                return .notFound
+            }
+
+            // struct
+            if let typeDeclarationSyntax = node.as(StructDeclSyntax.self) {
+                if typeDeclarationSyntax.name.id == token.id {
+                    return .found(result())
+                }
+                return .notFound
+            }
+
+            // protocol
+            if let typeDeclarationSyntax = node.as(ProtocolDeclSyntax.self) {
+                if typeDeclarationSyntax.name.id == token.id {
+                    return .found(result())
+                }
+                return .notFound
+            }
+
+            // enum
+            if let typeDeclarationSyntax = node.as(EnumDeclSyntax.self) {
+                if typeDeclarationSyntax.name.id == token.id {
+                    return .found(result())
+                }
+                return .notFound
+            }
+
+            // actor
+            if let typeDeclarationSyntax = node.as(ActorDeclSyntax.self) {
+                if typeDeclarationSyntax.name.id == token.id {
+                    return .found(result())
+                }
+                return .notFound
+            }
+
+            if let extensionDeclarationSyntax = node.parent?.as(ExtensionDeclSyntax.self) {
+                if extensionDeclarationSyntax.extendedType.id == node.id  {
+                    return .found(result())
+                }
+                return .notFound
+            }
+
+            return .moveToParent
+        }
+    }
+}
+
+public struct OtherDeclarationHighlightRule: SwiftSyntaxHighlightRule {
+    public var configuration: SwiftTheme.Configuration
+
+    public init(configuration: SwiftTheme.Configuration) {
+        self.configuration = configuration
+    }
+
+    public func decorate(_ token: TokenSyntax) -> AttributedString? {
+        guard case .identifier = token.tokenKind else {
+            return nil
+        }
+
+        return walkParent(of: Syntax(token)) { node in
+            func result() -> AttributedString {
+                AttributedString(token.text)
+                    .applying(configuration.style(for: .otherDeclarations))
+            }
+
+            // property declaration
+            if let patternBinding = node.parent?.as(PatternBindingSyntax.self),
+               patternBinding.pattern.id == node.id {
+                if let patternBindingList = patternBinding.parent?.as(PatternBindingListSyntax.self),
+                   let variableDeclaration = patternBindingList.parent?.as(VariableDeclSyntax.self),
+                   variableDeclaration.parent?.is(MemberBlockItemSyntax.self) ?? false {
+                    return .found(result())
+                }
+                return .notFound
+            }
+
+            // function declaration
+            if let functionDeclaration = node.as(FunctionDeclSyntax.self) {
+                if functionDeclaration.name.id == token.id {
+                    return .found(result())
+                }
+                return .notFound
+            }
+
+            // argument label of a function
+            if let functionParameter = node.as(FunctionParameterSyntax.self) {
+                if functionParameter.firstName.id == token.id {
+                    return .found(result())
+                }
+                return .notFound
+            }
+
+            // typealias declaration
+            if let typeAlias = node.as(TypeAliasDeclSyntax.self) {
+                if typeAlias.name.id == token.id {
+                    return .found(result())
+                }
+                return .notFound
+            }
+
+            if let associatedType = node.as(AssociatedTypeDeclSyntax.self) {
+                if associatedType.name.id == token.id {
+                    return .found(result())
+                }
+                return .notFound
+            }
+            return .moveToParent
+        }
+    }
+}
+
+public struct AttributeHeuristicHighlightRule: SwiftSyntaxHighlightRule {
+    public var configuration: SwiftTheme.Configuration
+    var predefinedAttributes: [String] {
+        // Follow the official document
+        // https://docs.swift.org/swift-book/documentation/the-swift-programming-language/attributes/
+        [
+            "available",
+            "backDeployed",
+            "discardableResult",
+            "dynamicCallable",
+            "dynamicMemberLookup",
+            "frozen",
+            "GKInspectable",
+            "inlinable",
+            "main",
+            "nonobjc",
+            "NSApplicationMain",
+            "NSCopying",
+            "NSManaged",
+            "objc",
+            "objcMembers",
+            "preconcurrency",
+            "propertyWrapper",
+            "resultBuilder",
+            "requires_stored_property_inits",
+            "testable",
+            "UIApplicationMain",
+            "unchecked",
+            "usableFromInline",
+            "warn_unqualified_access",
+            "IBAction",
+            "IBSegueAction",
+            "IBOutlet",
+            "IBDesignable",
+            "IBInspectable",
+            "autoclosure",
+            "convention",
+            "escaping",
+            "Sendable",
+            "unknown"
+        ]
+    }
+    public init(configuration: SwiftTheme.Configuration) {
+        self.configuration = configuration
+    }
+    
+    public func decorate(_ token: TokenSyntax) -> AttributedString? {
+        let attributeName: String
+        if let identifierTypeSyntax = token.parent?.as(IdentifierTypeSyntax.self),
+           identifierTypeSyntax.parent?.is(AttributeSyntax.self) ?? false {
+            attributeName = token.text
+        } else if token.tokenKind == .atSign,
+                  let attribute = token.parent?.as(AttributeSyntax.self),
+                  let identifierTypeSyntax = attribute.attributeName.as(IdentifierTypeSyntax.self) {
+            attributeName = identifierTypeSyntax.name.text
+        } else {
+            return nil
+        }
+
+
+        let attributedString = AttributedString(token.text)
+
+        return predefinedAttributes.contains(attributeName)
+        ? attributedString.applying(configuration.style(for: .keywords))
+        : attributedString.applying(configuration.style(for: .otherTypeNames))
+    }
+}
+
+public struct ClassAndTypeNameHighlightRule: SwiftSyntaxHighlightRule {
+    public var configuration: SwiftTheme.Configuration
+    
+    public init(configuration: SwiftTheme.Configuration) {
+        self.configuration = configuration
+    }
+    
+    public func decorate(_ token: TokenSyntax) -> AttributedString? {
+        guard token.parent?.is(IdentifierTypeSyntax.self) ?? false else { return nil }
+        return AttributedString(token.text)
+            .applying(configuration.style(for: .otherTypeNames))
+    }
+}
+
+public struct ClassAndTypeNameHeuristicHighlightRule: SwiftSyntaxHighlightRule {
+    public var configuration: SwiftTheme.Configuration
+
+    public init(configuration: SwiftTheme.Configuration) {
+        self.configuration = configuration
+    }
+
+    public func decorate(_ token: TokenSyntax) -> AttributedString? {
+        guard case .identifier = token.tokenKind else { return nil }
+
+        lazy var result = AttributedString(token.text)
+            .applying(configuration.style(for: .otherTypeNames))
+
+        if token.parent?.is(DeclReferenceExprSyntax.self) ?? false,
+           token.text.isFirstUppercase {
+            return result
+        }
+        return nil
+    }
+}
+
+public struct FunctionAndPropertyHighlightRule: SwiftSyntaxHighlightRule {
+    public var configuration: SwiftTheme.Configuration
+    
+    public init(configuration: SwiftTheme.Configuration) {
+        self.configuration = configuration
+    }
+    
+    public func decorate(_ token: TokenSyntax) -> AttributedString? {
+        // A pattern of simple function call
+        if case .identifier = token.tokenKind,
+           let declReferenceExprSyntax = token.parent?.as(DeclReferenceExprSyntax.self),
+           declReferenceExprSyntax.baseName == token,
+           let functionCallExprSyntax = declReferenceExprSyntax.parent?.as(FunctionCallExprSyntax.self),
+           functionCallExprSyntax.calledExpression.id == declReferenceExprSyntax.id {
+            return AttributedString(token.text).applying(configuration.style(for: .otherFunctionAndMethodNames))
+        }
+
+        // A pattern of member access like foo.doSomething
+        if case .identifier = token.tokenKind,
+           let declReferenceExprSyntax = token.parent?.as(DeclReferenceExprSyntax.self),
+           declReferenceExprSyntax.baseName == token,
+           let memberAccessExprSyntax = declReferenceExprSyntax.parent?.as(MemberAccessExprSyntax.self),
+           memberAccessExprSyntax.declName.id == declReferenceExprSyntax.id {
+            return AttributedString(token.text).applying(configuration.style(for: .otherFunctionAndMethodNames))
+        }
+
+        // macro pattern
+        if token.parent?.is(MacroExpansionExprSyntax.self) ?? false {
+            switch token.tokenKind {
+            case .identifier, .pound:
+                return AttributedString(token.text).applying(configuration.style(for: .otherFunctionAndMethodNames))
+            default: break
+            }
+        }
+
+        return nil
+    }
+}
+
+extension String {
+    var isFirstUppercase: Bool {
+        guard let firstScalar = unicodeScalars.first else { return false }
+        return CharacterSet.uppercaseLetters.contains(firstScalar)
     }
 }

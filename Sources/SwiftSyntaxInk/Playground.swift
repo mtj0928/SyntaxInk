@@ -2,51 +2,125 @@
 import SwiftUI
 import SyntaxInk
 
-let code = """
+typealias SwiftSyntaxHighlighter = SyntaxHighlighter<SwiftGrammar, SwiftTheme>
+
+extension SwiftSyntaxHighlighter {
+    init() {
+        self.init(grammar: SwiftGrammar(), theme: SwiftTheme(configuration: .defaultDark))
+    }
+}
+
+extension SwiftUI.Color {
+    static let xcodeBackgroundColor = SwiftUI.Color(red: 41 / 255.0, green: 42 / 255.0, blue: 47 / 255.0)
+}
+
+struct Playground: View {
+    var code: String
+
+    var body: some View {
+        let syntaxHighlighter = SyntaxHighlighter(
+            grammar: SwiftGrammar(),
+            theme: SwiftTheme(configuration: .defaultDark)
+        )
+        let attributedString = syntaxHighlighter.highlight(code)
+        ScrollView {
+            Text(attributedString)
+                .padding()
+                .frame(width: 700,  height: 700, alignment: .topLeading)
+        }
+        .ignoresSafeArea()
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .background(SwiftUI.Color(red: 41 / 255.0, green: 42 / 255.0, blue: 47 / 255.0))
+    }
+}
+
+let code1 = """
 import Observation
 
-@Observable 
-@MainActor 
-final class Person: Sendable { 
-    var name: String 
+struct Foo {}
+enum Bar {}
+actor Baz {}
+
+@Observable
+@MainActor
+final class Person<T: Hashable>: Sendable, Hashable {
     var age: Int = 1234.0
 
-    init(name: String, age: Int) {
-        self.name = name
-        self.age = age
+    /// Creates an instance
+    init(age: Int) { 
+        self.age = age 
     }
 
-    // MARK: - Foo
-
-#if DEBUG
-    /// AAA
-    /// ```swift
-    /// let message = "helo"
-    /// ```
-    func greets(_ actor: isolated (any Actor)? = #isolation) {
+#if os(iOS)
+    func aaa(_ actor: isolated (any Actor)? = #isolation) {
         // do something
-        print("Hello")
+    }
+#else 
+    func aaa() async throws(FooError) {
+        let foo = Foo()
+        foo.doSomething(foo.number, aaa: T.aaa())
     }
 #endif
-
 }
 
 let person = Person()
-print("Name: \\(person.name)", 'a')
-\"""
-hello
-\"""
+print("Name: \\(person.name)")
+#expect(true)
 """
 
 #Preview {
-    let syntaxHighlighter = SyntaxHighlighter(
-        grammar: SwiftGrammar(),
-        theme: SwiftTheme(configuration: .defaultDark)
-    )
-    let attributedString = syntaxHighlighter.highlight(code)
-    Text(attributedString)
-        .padding()
-        .frame(width: 700,  height: 700, alignment: .topLeading)
-        .background(SwiftUI.Color(red: 41 / 255.0, green: 42 / 255.0, blue: 47 / 255.0))
+    Playground(code: code1)
 }
+
+
+let code2 = """
+class Foo { 
+    typealias AAA = String
+}
+
+protocol Foo { 
+    associatedtype AAAA
+}
+
+extension Foo.AAA {
+    var number: Int {
+        get { 10 }
+        nonmutating set { }
+    }
+}
+"""
+
+#Preview {
+    Playground(code: code2)
+}
+
+let code3 = """
+protocol TP {
+    static func number() -> Int
+}
+
+struct BBB {
+    static let shared = BBB()
+}
+
+struct AAA<T: TP> {
+    private func aaa(_ handler: @escaping @Sendable () -> Void) {
+    }
+
+    func doo(_ actor: isolated (any Actor)? = #isolation) {
+        let ff = AAA()
+        let _ = BBB.shared
+        let number = T.number()
+        if 1 == 2 {}
+        #expect(1 == 1)
+    }
+
+    subscript() {}
+}
+"""
+
+#Preview {
+    Playground(code: code3)
+}
+
 #endif

@@ -6,7 +6,7 @@ typealias SwiftSyntaxHighlighter = SyntaxHighlighter<SwiftGrammar, SwiftTheme>
 
 extension SwiftSyntaxHighlighter {
     init() {
-        self.init(grammar: SwiftGrammar(), theme: SwiftTheme(configuration: .defaultDark))
+        self.init(grammar: SwiftGrammar(), theme: .defaultDark)
     }
 }
 

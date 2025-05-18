@@ -7,8 +7,8 @@ public struct SwiftTheme: Theme {
     public var configuration: Configuration
     public var highlightRules: [any SwiftSyntaxHighlightRule] = []
 
-    public init(configuration: Configuration) {
-        self.configuration = configuration
+    public init(_ styleResolver: @escaping @Sendable (StyleKind) -> SyntaxStyle) {
+        self.configuration = Configuration(styleResolver: styleResolver)
         self.highlightRules = [
             KeywordHighlightRule(configuration: configuration),
             AttributeHeuristicHighlightRule(configuration: configuration),
@@ -130,13 +130,10 @@ extension SwiftTheme {
     }
 
     public struct Configuration: Sendable {
-        public var baseStyle: SyntaxStyle
-        public var converters: [StyleKind: @Sendable (inout SyntaxStyle) -> Void]
+        public var styleResolver: @Sendable (StyleKind) -> SyntaxStyle
 
         func style(for kind: StyleKind) -> SyntaxStyle {
-            var style = baseStyle
-            converters[kind]?(&style)
-            return style
+            styleResolver(kind)
         }
     }
 }

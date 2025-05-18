@@ -1,6 +1,6 @@
 import SyntaxInk
 
-extension SwiftTheme.Configuration {
+extension SwiftTheme {
     public static let defaultDark = {
         let base = SyntaxStyle(
             font: .system(size: 16, weight: .medium, design: .monospaced),
@@ -9,45 +9,40 @@ extension SwiftTheme.Configuration {
         return defaultDark(base)
     }()
 
-    public static func defaultDark(_ base: SyntaxStyle) -> SwiftTheme.Configuration {
-        SwiftTheme.Configuration(baseStyle: base, converters: [
-            .plainText: { style in
-            },
-            .keywords: { style in
+    public static func defaultDark(_ base: SyntaxStyle) -> SwiftTheme {
+        SwiftTheme { kind in
+            var style = base
+            switch kind {
+            case .plainText: break
+            case .keywords:
                 style.color = SyntaxColor(red: 252, green: 95, blue: 163)
                 style.font.weight = .bold
-            },
-            .comments: { style in
+            case .comments:
                 style.color = SyntaxColor(red: 108, green: 121, blue: 134)
-            },
-            .documentationMarkup: { style in
+            case .documentationMarkup:
                 style.color = SyntaxColor(red: 108, green: 121, blue: 134)
                 style.font.name = "Helvetica"
-            },
-            .string: { style in
+                style.font.weight = .regular
+            case .string:
                 style.color = SyntaxColor(red: 252, green: 106, blue: 93)
-            },
-            .numbers: { style in
+            case .numbers:
                 style.color = SyntaxColor(red: 208, green: 191, blue: 105)
-            },
-            .preprocessorStatements: { style in
+            case .preprocessorStatements:
                 style.color = SyntaxColor(red: 253, green: 143, blue: 63)
-            },
-            .typeDeclarations: { style in
+            case .typeDeclarations:
                 style.color = SyntaxColor(red: 93, green: 216, blue: 255)
-            },
-            .otherDeclarations: { style in
+            case .otherDeclarations:
                 style.color = SyntaxColor(red: 65, green: 161, blue: 192)
-            },
-            .otherClassNames: { style in
+            case .otherClassNames:
                 style.color = SyntaxColor(red: 208, green: 168, blue: 255)
-            },
-            .otherTypeNames: { style in
+            case .otherFunctionAndMethodNames:
+                style.color = SyntaxColor(red: 161, green: 103, blue: 230)
+            case .otherTypeNames:
                 style.color = SyntaxColor(red: 208, green: 168, blue: 255)
-            },
-            .otherFunctionAndMethodNames: { style in
+            case .otherPropertiesAndGlobals:
                 style.color = SyntaxColor(red: 161, green: 103, blue: 230)
             }
-        ])
+            return style
+        }
     }
 }

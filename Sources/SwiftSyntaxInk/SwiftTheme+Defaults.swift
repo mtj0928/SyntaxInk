@@ -3,7 +3,7 @@ import SyntaxInk
 extension SwiftTheme.Configuration {
     public static let defaultDark = {
         let base = SyntaxStyle(
-            font: SyntaxFont(name: "Menlo", size: 16, weight: .regular),
+            font: .system(size: 16, weight: .medium, design: .monospaced),
             color: SyntaxColor(red: 255, green: 255, blue: 255)
         )
         return defaultDark(base)
@@ -15,14 +15,14 @@ extension SwiftTheme.Configuration {
             },
             .keywords: { style in
                 style.color = SyntaxColor(red: 252, green: 95, blue: 163)
-                style.font.name = "Menlo Bold"
+                style.font.weight = .bold
             },
             .comments: { style in
                 style.color = SyntaxColor(red: 108, green: 121, blue: 134)
             },
             .documentationMarkup: { style in
                 style.color = SyntaxColor(red: 108, green: 121, blue: 134)
-                style.font = SyntaxFont(name: "Helvetica", size: 16, weight: .regular)
+                style.font.name = "Helvetica"
             },
             .string: { style in
                 style.color = SyntaxColor(red: 252, green: 106, blue: 93)

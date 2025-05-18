@@ -18,25 +18,22 @@ struct Playground: View {
     var code: String
 
     var body: some View {
-        let syntaxHighlighter = SyntaxHighlighter(
-            grammar: SwiftGrammar(),
-            theme: SwiftTheme(configuration: .defaultDark)
-        )
+        let syntaxHighlighter = SwiftSyntaxHighlighter()
         let attributedString = syntaxHighlighter.highlight(code)
         ScrollView {
             Text(attributedString)
                 .padding()
-                .frame(width: 700,  height: 700, alignment: .topLeading)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
-#if os(iOS)
-        .ignoresSafeArea()
-#endif
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(SwiftUI.Color(red: 41 / 255.0, green: 42 / 255.0, blue: 47 / 255.0))
+        .background(Color.xcodeBackgroundColor)
+#if os(visionOS)
+        .glassBackgroundEffect()
+#endif
     }
 }
 
-let code1 = """
+let sourceCode = """
 import Observation
 
 struct Foo {}
@@ -71,7 +68,15 @@ print("Name: \\(person.name)")
 """
 
 #Preview {
-    Playground(code: code1)
+    let syntaxHighlighter = SwiftSyntaxHighlighter()
+    let attributedString = syntaxHighlighter.highlight(sourceCode)
+    ScrollView {
+        Text(attributedString)
+            .padding()
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    .background(Color.xcodeBackgroundColor)
 }
 
 

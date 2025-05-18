@@ -30,28 +30,61 @@ public struct SyntaxColor: Sendable {
     }
 }
 
-public struct SyntaxFont: Sendable {
-    public var name: String
-    public var size: CGFloat
-    public var weight: SyntaxWeight
+public enum SyntaxFont: Sendable {
+    case system(size: CGFloat, weight: Font.Weight, design: Font.Design = .monospaced)
+    case custom(name: String, size: CGFloat, weight: Font.Weight)
 
-    public init(name: String, size: CGFloat, weight: SyntaxWeight) {
-        self.name = name
-        self.size = size
-        self.weight = weight
+    public init(name: String, size: CGFloat, weight: Font.Weight) {
+        self = .custom(name: name, size: size, weight: weight)
     }
-}
 
-extension SyntaxFont {
-    public enum SyntaxWeight: Sendable {
-        case ultraLight
-        case thin
-        case light
-        case regular
-        case medium
-        case semibold
-        case bold
-        case heavy
-        case black
+    public var name: String? {
+        get {
+            switch self {
+            case .system: nil
+            case .custom(let name, _, _ ): name
+            }
+        }
+        set {
+            self = if let newValue {
+                .custom(name: newValue, size: size, weight: weight)
+            } else {
+                .system(size: size, weight: weight, design: .monospaced)
+            }
+        }
+    }
+
+    public var size: CGFloat {
+        get {
+            switch self {
+            case .system(let size, _, _): size
+            case .custom(_, let size, _): size
+            }
+        }
+        set {
+            switch self {
+            case .system(_, let weight, let design):
+                self = .system(size: newValue, weight: weight, design: design)
+            case .custom(let name, let size, let weight):
+                self = .custom(name: name, size: size, weight: weight)
+            }
+        }
+    }
+
+    public var weight: Font.Weight {
+        get {
+            switch self {
+            case .system(_, let weight, _): weight
+            case .custom(_, _, let weight): weight
+            }
+        }
+        set {
+            switch self {
+            case .system(let size, _, let design):
+                self = .system(size: size, weight: newValue, design: design)
+            case .custom(let name, let size, _):
+                self = .custom(name: name, size: size, weight: newValue)
+            }
+        }
     }
 }

@@ -4,9 +4,10 @@ import SyntaxInk
 
 struct Playground: View {
     var code: String
+    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
-        let syntaxHighlighter = SwiftSyntaxHighlighter(theme: .defaultDark)
+        let syntaxHighlighter = SwiftSyntaxHighlighter(theme: colorScheme == .light ? .default : .defaultDark)
         let attributedString = syntaxHighlighter.highlight(code)
         ScrollView {
             Text(attributedString)
@@ -14,7 +15,7 @@ struct Playground: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(Color.xcodeBackgroundDefaultDarkColor)
+        .background(colorScheme == .light ? Color.xcodeBackgroundDefaultColor : .xcodeBackgroundDefaultDarkColor)
 #if os(visionOS)
         .glassBackgroundEffect()
 #endif
@@ -56,15 +57,7 @@ print("Name: \\(person.name)")
 """
 
 #Preview {
-    let syntaxHighlighter = SwiftSyntaxHighlighter()
-    let attributedString = syntaxHighlighter.highlight(sourceCode)
-    ScrollView {
-        Text(attributedString)
-            .padding()
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    }
-    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    .background(Color.xcodeBackgroundDefaultDarkColor)
+    Playground(code: sourceCode)
 }
 
 

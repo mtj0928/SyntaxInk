@@ -1,6 +1,56 @@
 import SyntaxInk
 import SyntaxInk
 
+// MARK: - Default
+
+extension SwiftTheme {
+    public static let `default` = {
+        let base = SyntaxStyle(
+            font: .system(size: 16, weight: .regular, design: .monospaced),
+            color: SyntaxColor(red: 0, green: 0, blue: 0)
+        )
+        return `default`(base)
+    }()
+
+    public static func `default`(_ base: SyntaxStyle) -> SwiftTheme {
+        SwiftTheme { kind in
+            var style = base
+            switch kind {
+            case .plainText: break
+            case .keywords:
+                style.color = SyntaxColor(red: 155, green: 35, blue: 147)
+                style.font.weight = .semibold
+            case .comments:
+                style.color = SyntaxColor(red: 93, green: 108, blue: 121)
+            case .documentationMarkup:
+                style.font.name = "Helvetica Neue"
+                style.color = SyntaxColor(red: 93, green: 108, blue: 121)
+            case .string:
+                style.color = SyntaxColor(red: 196, green: 26, blue: 22)
+            case .numbers:
+                style.color = SyntaxColor(red: 196, green: 26, blue: 22)
+            case .preprocessorStatements:
+                style.color = SyntaxColor(red: 100, green: 56, blue: 32)
+            case .typeDeclarations:
+                style.color = SyntaxColor(red: 11, green: 79, blue: 121)
+            case .otherDeclarations:
+                style.color = SyntaxColor(red: 15, green: 104, blue: 160)
+            case .otherClassNames:
+                style.color = SyntaxColor(red: 57, green: 0, blue: 160)
+            case .otherFunctionAndMethodNames:
+                style.color = SyntaxColor(red: 108, green: 54, blue: 169)
+            case .otherTypeNames:
+                style.color = SyntaxColor(red: 57, green: 0, blue: 160)
+            case .otherPropertiesAndGlobals:
+                style.color = SyntaxColor(red: 108, green: 54, blue: 169)
+            }
+            return style
+        }
+    }
+}
+
+// MARK: - Default Dark
+
 extension SwiftTheme {
     public static let defaultDark = {
         let base = SyntaxStyle(

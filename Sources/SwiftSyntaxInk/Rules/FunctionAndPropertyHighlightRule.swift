@@ -8,7 +8,7 @@ public struct FunctionAndPropertyHighlightRule: SwiftSyntaxHighlightRule {
         self.configuration = configuration
     }
     
-    public func decorate(_ token: TokenSyntax) -> AttributedString? {
+    public func attributes(for token: TokenSyntax) -> AttributedString? {
         // A pattern of simple function call
         if case .identifier = token.tokenKind,
            let declReferenceExprSyntax = token.parent?.as(DeclReferenceExprSyntax.self),

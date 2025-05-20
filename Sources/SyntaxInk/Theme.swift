@@ -1,9 +1,11 @@
 import Foundation
-import SwiftUI
 
+/// A theme of a syntax hight.
 public protocol Theme: Sendable {
-    associatedtype Token: Sendable
-    
-    func decorate(token: Token) -> AttributedString
-}
 
+    /// A token for this theme.
+    associatedtype Token: Sendable
+
+    /// Gets `AttributedString` for the given token.
+    func attributes(for token: Token) -> AttributedString
+}

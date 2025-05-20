@@ -8,7 +8,7 @@ public struct StringHighlightRule: SwiftSyntaxHighlightRule {
         self.configuration = configuration
     }
     
-    public func decorate(_ token: TokenSyntax) -> AttributedString? {
+    public func attributes(for token: TokenSyntax) -> AttributedString? {
         switch token.tokenKind {
         case .stringSegment, .multilineStringQuote, .stringQuote:
             return AttributedString(token.text)

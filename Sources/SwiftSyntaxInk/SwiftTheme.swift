@@ -23,9 +23,9 @@ public struct SwiftTheme: Theme {
         ]
     }
 
-    public func decorate(token: TokenSyntax) -> AttributedString {
+    public func attributes(for token: TokenSyntax) -> AttributedString {
         let results = highlightRules.lazy
-            .compactMap { rule in rule.decorate(token) }
+            .compactMap { rule in rule.attributes(for: token) }
             .first ?? AttributedString(token.text).applying(configuration.style(for: .plainText))
 
         return applyTrivia(to: results, for: token)

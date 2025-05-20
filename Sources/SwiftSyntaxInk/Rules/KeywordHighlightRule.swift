@@ -18,7 +18,7 @@ public struct KeywordHighlightRule: SwiftSyntaxHighlightRule {
         self.configuration = configuration
     }
 
-    public func decorate(_ token: TokenSyntax) -> AttributedString? {
+    public func attributes(for token: TokenSyntax) -> AttributedString? {
         lazy var result = AttributedString(token.text)
             .applying(configuration.style(for: .keywords))
 

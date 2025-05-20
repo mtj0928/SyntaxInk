@@ -1,9 +1,11 @@
 import SyntaxInk
-import SyntaxInk
 
 // MARK: - Default
 
 extension SwiftTheme {
+    /// The default light Xcode theme.
+    ///
+    /// Use `Color.xcodeBackgroundDefaultColor` as the background color for this theme.
     public static let `default` = {
         let base = SyntaxStyle(
             font: .system(size: 16, weight: .regular, design: .monospaced),
@@ -12,6 +14,10 @@ extension SwiftTheme {
         return `default`(base)
     }()
 
+    /// The default light Xcode theme.
+    /// You can change the base style.
+    ///
+    /// Use `Color.xcodeBackgroundDefaultColor` as the background color for this theme.
     public static func `default`(_ base: SyntaxStyle) -> SwiftTheme {
         SwiftTheme { kind in
             var style = base
@@ -52,6 +58,9 @@ extension SwiftTheme {
 // MARK: - Default Dark
 
 extension SwiftTheme {
+    /// The default dark theme in Xcode.
+    ///
+    /// Use `Color.xcodeBackgroundDefaultDarkColor` as the background color for this theme.
     public static let defaultDark = {
         let base = SyntaxStyle(
             font: .system(size: 16, weight: .medium, design: .monospaced),
@@ -60,6 +69,10 @@ extension SwiftTheme {
         return defaultDark(base)
     }()
 
+    /// The default dark theme in Xcode.
+    /// The base style can be changed.
+    ///
+    /// Use `Color.xcodeBackgroundDefaultDarkColor` as the background color for this theme.
     public static func defaultDark(_ base: SyntaxStyle) -> SwiftTheme {
         SwiftTheme { kind in
             var style = base

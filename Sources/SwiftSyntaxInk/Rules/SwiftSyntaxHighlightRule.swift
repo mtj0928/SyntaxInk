@@ -2,7 +2,7 @@ import Foundation
 import SwiftSyntax
 
 public protocol SwiftSyntaxHighlightRule: Sendable {
-    func decorate(_ token: TokenSyntax) -> AttributedString?
+    func attributes(for token: TokenSyntax) -> AttributedString?
 }
 
 enum WalkParentAction<T> {

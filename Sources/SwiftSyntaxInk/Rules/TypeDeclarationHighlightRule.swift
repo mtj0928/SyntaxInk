@@ -8,7 +8,7 @@ public struct TypeDeclarationHighlightRule: SwiftSyntaxHighlightRule {
         self.configuration = configuration
     }
     
-    public func decorate(_ token: TokenSyntax) -> AttributedString? {
+    public func attributes(for token: TokenSyntax) -> AttributedString? {
         guard case .identifier = token.tokenKind else {
             return nil
         }

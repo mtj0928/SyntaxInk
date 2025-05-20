@@ -8,7 +8,7 @@ public struct ClassAndTypeNameHighlightRule: SwiftSyntaxHighlightRule {
         self.configuration = configuration
     }
     
-    public func decorate(_ token: TokenSyntax) -> AttributedString? {
+    public func attributes(for token: TokenSyntax) -> AttributedString? {
         guard token.parent?.is(IdentifierTypeSyntax.self) ?? false else { return nil }
         return AttributedString(token.text)
             .applying(configuration.style(for: .otherTypeNames))

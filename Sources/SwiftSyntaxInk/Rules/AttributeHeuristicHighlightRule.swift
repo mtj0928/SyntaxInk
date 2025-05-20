@@ -47,7 +47,7 @@ public struct AttributeHeuristicHighlightRule: SwiftSyntaxHighlightRule {
         self.configuration = configuration
     }
     
-    public func decorate(_ token: TokenSyntax) -> AttributedString? {
+    public func attributes(for token: TokenSyntax) -> AttributedString? {
         let attributeName: String
         if let identifierTypeSyntax = token.parent?.as(IdentifierTypeSyntax.self),
            identifierTypeSyntax.parent?.is(AttributeSyntax.self) ?? false {

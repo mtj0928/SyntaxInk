@@ -8,7 +8,7 @@ public struct NumberHighlightRule: SwiftSyntaxHighlightRule {
         self.configuration = configuration
     }
 
-    public func decorate(_ token: TokenSyntax) -> AttributedString? {
+    public func attributes(for token: TokenSyntax) -> AttributedString? {
         switch token.tokenKind {
         case .integerLiteral, .floatLiteral:
             return AttributedString(token.text)

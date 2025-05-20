@@ -1,6 +1,7 @@
 import SwiftUI
 
 extension AttributedString {
+    /// Applies the style to this `AttributedString`.
     public func applying(_ style: SyntaxStyle) -> Self {
         var copy = self
         copy.swiftUI.font = style.font.resolve()

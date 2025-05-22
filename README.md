@@ -22,6 +22,12 @@ try! await person.say("Hi, SyntaxInk can highlight Swift code!")
 }
 ```
 
+This is the results of the preview.
+
+<img width="734" alt="screenshot" src="https://github.com/user-attachments/assets/d51f8e9c-acff-4e44-887e-dcf997beeae8" />
+
+
+
 ## Install
 ```swift
 let package = Package(

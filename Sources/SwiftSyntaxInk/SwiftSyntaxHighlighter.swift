@@ -1,10 +1,10 @@
 import SyntaxInk
 import SwiftUI
 
-typealias SwiftSyntaxHighlighter = SyntaxHighlighter<SwiftGrammar, SwiftTheme>
+public typealias SwiftSyntaxHighlighter = SyntaxHighlighter<SwiftGrammar, SwiftTheme>
 
 extension SwiftSyntaxHighlighter {
-    init(theme: SwiftTheme = .default) {
+    public init(theme: SwiftTheme = .default) {
         self.init(grammar: SwiftGrammar(), theme: theme)
     }
 }

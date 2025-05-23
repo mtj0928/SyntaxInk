@@ -39,6 +39,28 @@ You can specify `dafaultDark` as a theme and `xcodeBackgroundDefaultDarkColor` a
 
 <img width="734" alt="screenshot_dark" src="https://github.com/user-attachments/assets/a1c015bd-fc1f-49e9-899d-d2bcf27c5dc9" />
 
+## Theme
+SyntaxInk supports custom theme feature, and you can control the color and font.
+
+### Swift
+Please build `SyntaxStyle in a closure of `SwiftTheme`.
+The kind corresponds to Xcode's theme kind.
+
+```swift
+let theme = SwiftTheme { kind in
+    var base = SyntaxStyle(
+        font: .system(size: 16, weight: .medium, design: .monospaced),
+        color: SyntaxColor(red: 255, green: 255, blue: 255)
+    )
+    switch kind {
+    case .keywords:
+        style.font.weight = .bold
+    default: break
+    }
+    return style
+}
+let syntaxHighlighter = SwiftSyntaxHighlighter(theme: theme)
+```
 
 ## Install
 ```swift

@@ -43,7 +43,7 @@ You can specify `dafaultDark` as a theme and `xcodeBackgroundDefaultDarkColor` a
 SyntaxInk supports custom theme feature, and you can control the color and font.
 
 ### Swift
-Please build `SyntaxStyle in a closure of `SwiftTheme`.
+Please build `SyntaxStyle` in a closure of `SwiftTheme`.
 The kind corresponds to Xcode's theme kind.
 
 ```swift

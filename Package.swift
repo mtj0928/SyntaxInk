@@ -9,7 +9,7 @@ let package = Package(
         .library(name: "SyntaxInk", targets: ["SyntaxInk"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "601.0.0"),
+        .package(url: "https://github.com/swiftlang/swift-syntax.git", branch: "release/6.2.0"),
     ],
     targets: [
         .target(

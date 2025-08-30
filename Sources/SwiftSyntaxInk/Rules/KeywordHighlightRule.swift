@@ -14,6 +14,11 @@ public struct KeywordHighlightRule: SwiftSyntaxHighlightRule {
         "isolation"
     ]
 
+    private let predefinedKeywords: Set<String> = [
+        "nonsending",
+        "unsafe"
+    ]
+
     public init(configuration: SwiftTheme.Configuration) {
         self.configuration = configuration
     }
@@ -26,6 +31,9 @@ public struct KeywordHighlightRule: SwiftSyntaxHighlightRule {
             return result
         } else if let macro = token.parent?.as(MacroExpansionExprSyntax.self),
                   predefinedMacroKeywords.contains(macro.macroName.text) {
+            return result
+        } else if token.parent?.is(DeclModifierDetailSyntax.self) ?? false,
+                  predefinedKeywords.contains(token.text) {
             return result
         } else {
             return nil
